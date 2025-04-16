@@ -7,25 +7,25 @@
 
     <fragment
         android:id="@+id/addingFragment"
-        android:name="com.example.lr4_second.fragments.AddingFragment"
+        android:name="com.example.lr10_second.fragments.AddingFragment"
         android:label="Добавление"
         tools:layout="@layout/fragment_adding" />
 
     <fragment
         android:id="@+id/expensesFragment"
-        android:name="com.example.lr4_second.fragments.ExpensesFragment"
+        android:name="com.example.lr10_second.fragments.ExpensesFragment"
         android:label="Расходы"
         tools:layout="@layout/fragment_expenses" />
 
     <fragment
         android:id="@+id/tableFragment"
-        android:name="com.example.lr4_second.fragments.TableFragment"
+        android:name="com.example.lr10_second.fragments.TableFragment"
         android:label="Таблица"
         tools:layout="@layout/fragment_table" />
 
     <fragment
         android:id="@+id/cameraFragment"
-        android:name="com.example.lr4_second.fragments.CameraFragment"
+        android:name="com.example.lr10_second.fragments.CameraFragment"
         android:label="Камера"
         tools:layout="@layout/fragment_camera" />
 

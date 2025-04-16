@@ -1,4 +1,4 @@
-package com.example.lr4_second
+package com.example.lr10_second
 
 import org.junit.Test
 
