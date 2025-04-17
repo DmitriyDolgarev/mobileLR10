@@ -14,11 +14,11 @@
     <item
         android:id="@+id/tableFragment"
         android:title="Таблица"
-        android:icon="@drawable/table"/>
+        android:icon="@drawable/baseline_airplay_24"/>
 
     <item
         android:id="@+id/cameraFragment"
         android:title="Камера"
-        android:icon="@drawable/camera"/>
+        android:icon="@drawable/baseline_add_a_photo_24"/>
 
 </menu>
