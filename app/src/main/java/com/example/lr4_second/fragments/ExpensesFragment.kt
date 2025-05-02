@@ -1,7 +1,6 @@
 package com.example.lr4_second.fragments
 
 import android.app.AlertDialog
-import android.app.Application
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -9,73 +8,43 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.asLiveData
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.example.lr4_second.R
 import com.example.lr4_second.adapter.ExpenseAdapter
-import com.example.lr4_second.datasources.ExpenseDataSource
-import com.example.lr4_second.db.DBWorker
-import com.example.lr4_second.db.MainDB
+import com.example.lr4_second.databinding.FragmentAddingBinding
+import com.example.lr4_second.databinding.FragmentExpensesBinding
 import com.example.lr4_second.domain.model.ExpenseModel
-import com.example.lr4_second.usecases.expense.AddExpenseUseCase
-import com.example.lr4_second.usecases.expense.DeleteExpenseUseCase
-import com.example.lr4_second.usecases.expense.LoadExpensesUseCase
-import com.example.lr4_second.usecases.expense.UpdateExpenseUseCase
 import com.example.lr4_second.viewModel.ExpenseViewModel
-import com.example.lr4_second.viewModel.ExpenseViewModelFactory
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class ExpensesFragment: Fragment() {
 
     lateinit var adapter: ExpenseAdapter
     lateinit var recyclerView: RecyclerView
 
-    private lateinit var viewModel: ExpenseViewModel
+    private val viewModel: ExpenseViewModel by viewModels()
+
+    private var _binding: FragmentExpensesBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        return inflater.inflate(R.layout.fragment_expenses, container, false)
+        _binding = FragmentExpensesBinding.inflate(inflater, container, false)
+        binding.lifecycleOwner = viewLifecycleOwner
+        binding.viewModel = viewModel
+        return binding.root
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?)
     {
-        var list: ArrayList<ExpenseModel> = ArrayList()
-
-        val application = requireActivity().application as Application
-
-        val db = MainDB.getDB(requireContext())
-
-        val expensesDataSource: ExpenseDataSource = ExpenseDataSource(DBWorker(db))
-
-        val addExpenseUseCase = AddExpenseUseCase(expensesDataSource)
-        val loadExpensesUseCase = LoadExpensesUseCase(expensesDataSource)
-        val updateExpenseUseCse = UpdateExpenseUseCase(expensesDataSource)
-        val deleteExpenseUseCase = DeleteExpenseUseCase(expensesDataSource)
-
-        val factory = ExpenseViewModelFactory(
-            application,
-            loadExpensesUseCase,
-            addExpenseUseCase,
-            updateExpenseUseCse,
-            deleteExpenseUseCase
-        )
-
-        viewModel = ViewModelProvider(this, factory)[ExpenseViewModel::class.java]
+        recyclerView = binding.expensesRvExpenses
+        adapter = ExpenseAdapter()
+        recyclerView.adapter = adapter
 
         viewLifecycleOwner.lifecycleScope.launch {
-
             viewModel.loadExpenses()
-
-            viewModel.expenses.collect {expensesList ->
-                list.clear()  // Очищаем список перед добавлением новых данных
-
-                for (expense in expensesList)
-                {
-                    list.add(expense)
-                }
-
-                initial(view, list)
-            }
         }
     }
 
@@ -134,14 +103,5 @@ class ExpensesFragment: Fragment() {
         }
 
         builder.show()
-    }
-
-    private fun initial(view: View, list: ArrayList<ExpenseModel>)
-    {
-        recyclerView = view.findViewById(R.id.expensesRv_expenses)
-        adapter = ExpenseAdapter()
-        recyclerView.adapter = adapter
-
-        adapter.setList(list)
     }
 }

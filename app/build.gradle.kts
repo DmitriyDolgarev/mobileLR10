@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     kotlin("kapt")
+    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -40,6 +41,7 @@ android {
     buildFeatures {
         compose = true
         viewBinding = true
+        dataBinding = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
@@ -53,13 +55,17 @@ android {
 
 dependencies {
 
+    // Основные
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
-    implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
-    implementation(libs.google.material)
     implementation(libs.androidx.lifecycle.runtime.ktx)
+
+    // Material (только одна версия)
+    implementation("com.google.android.material:material:1.11.0")
+
+    // Compose
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
@@ -67,18 +73,24 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
 
-    implementation("org.apache.poi:poi:5.2.2")
+    // Room
     implementation("androidx.room:room-ktx:2.6.1")
-    implementation(libs.androidx.navigation.fragment.ktx)
-    implementation(libs.androidx.navigation.ui.ktx)
     kapt("androidx.room:room-compiler:2.6.1")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.7")
 
-
+    // Navigation (только одна версия)
     implementation("androidx.navigation:navigation-fragment-ktx:2.7.6")
     implementation("androidx.navigation:navigation-ui-ktx:2.7.6")
-    implementation("com.google.android.material:material:1.11.0")
+    implementation("androidx.hilt:hilt-navigation-fragment:1.2.0") // Обновленная версия
 
+    // Hilt (основные зависимости)
+    implementation("com.google.dagger:hilt-android:2.48")
+    kapt("com.google.dagger:hilt-android-compiler:2.48")
+    kapt("androidx.hilt:hilt-compiler:1.2.0") // Обновленная версия
+
+    // Apache POI
+    implementation("org.apache.poi:poi:5.2.2")
+
+    // Тестирование
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

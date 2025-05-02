@@ -6,8 +6,9 @@ import com.example.lr4_second.db.ExpenseItem
 import com.example.lr4_second.db.MainDB
 import com.example.lr4_second.domain.model.ExpenseModel
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-class ExpenseDataSource(private val db: DBWorker) {
+class ExpenseDataSource @Inject constructor(private val db: DBWorker) {
 
 
     fun getExpenses(): Flow<List<ExpenseModel>>

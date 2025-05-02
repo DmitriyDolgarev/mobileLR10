@@ -16,34 +16,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.LR4_Second"
-        tools:targetApi="31">
-        <activity
-            android:name=".CameraActivity"
-            android:exported="false"
-            android:label="@string/title_activity_camera"
-            android:theme="@style/Theme.LR4_Second" />
-        <activity
-            android:name=".TableActivity"
-            android:exported="true"
-            android:label="Table"
-            android:theme="@style/Theme.LR4_Second">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".Expenses"
-            android:exported="true"
-            android:label="@string/title_activity_expenses"
-            android:theme="@style/Theme.LR4_Second">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+        tools:targetApi="31"
+        android:name=".App">
         <activity
             android:name=".MainActivity"
             android:exported="true">

@@ -49,6 +49,12 @@ class ImageAdapter: RecyclerView.Adapter<ImagesViewHolder>() {
     }
 
     @SuppressLint("NotifyDataSetChanged")
+    fun submitList(newList: List<ImageModel>) {
+        imageList.clear()
+        imageList.addAll(newList)
+        notifyDataSetChanged()
+    }
+
     fun setList(list: ArrayList<ImageModel>)
     {
         imageList = list

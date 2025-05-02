@@ -61,6 +61,13 @@ class ExpenseAdapter: RecyclerView.Adapter<ExpensesViewHolder>() {
     }
 
     @SuppressLint("NotifyDataSetChanged")
+    fun submitList(newList: List<ExpenseModel>) {
+        expensesList.clear()
+        expensesList.addAll(newList)
+        notifyDataSetChanged()
+    }
+
+
     fun setList(list: ArrayList<ExpenseModel>)
     {
         expensesList = list

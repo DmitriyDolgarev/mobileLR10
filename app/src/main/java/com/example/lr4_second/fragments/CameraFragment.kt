@@ -1,7 +1,6 @@
 package com.example.lr4_second.fragments
 
 import android.app.Activity
-import android.app.Application
 import android.content.ContentValues
 import android.content.Intent
 import android.graphics.Bitmap
@@ -20,36 +19,21 @@ import android.widget.Button
 import android.widget.Spinner
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.asLiveData
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.example.lr4_second.R
 import com.example.lr4_second.adapter.ImageAdapter
-import com.example.lr4_second.datasources.ExpenseDataSource
-import com.example.lr4_second.datasources.ExpensePhotoDataSource
-import com.example.lr4_second.db.DBWorker
-import com.example.lr4_second.db.ExpenseItem
-import com.example.lr4_second.db.ExpensePhoto
-import com.example.lr4_second.db.MainDB
-import com.example.lr4_second.db.Photos
-import com.example.lr4_second.domain.model.ExpenseModel
+import com.example.lr4_second.databinding.FragmentCameraBinding
 import com.example.lr4_second.domain.model.ImageModel
-import com.example.lr4_second.usecases.expense.AddExpenseUseCase
-import com.example.lr4_second.usecases.expense.DeleteExpenseUseCase
-import com.example.lr4_second.usecases.expense.LoadExpensesUseCase
-import com.example.lr4_second.usecases.expense.UpdateExpenseUseCase
-import com.example.lr4_second.usecases.expensePhoto.AddExpensePhotosUseCase
-import com.example.lr4_second.usecases.expensePhoto.DeleteExpensePhotoUseCase
-import com.example.lr4_second.usecases.expensePhoto.LoadExpensePhotosUseCase
 import com.example.lr4_second.viewModel.ExpensePhotosViewModel
-import com.example.lr4_second.viewModel.ExpensePhotosViewModelFactory
 import com.example.lr4_second.viewModel.ExpenseViewModel
-import com.example.lr4_second.viewModel.ExpenseViewModelFactory
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.OutputStream
 
+@AndroidEntryPoint
 class CameraFragment: Fragment() {
 
     private val requestCodeTakePhoto = 1
@@ -67,54 +51,22 @@ class CameraFragment: Fragment() {
 
     lateinit var view1: View
 
-    private lateinit var expenseViewModel: ExpenseViewModel
-    private lateinit var photosViewModel: ExpensePhotosViewModel
+    private val expenseViewModel: ExpenseViewModel by viewModels()
+    private val photosViewModel: ExpensePhotosViewModel by viewModels()
+
+    private var _binding: FragmentCameraBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        return inflater.inflate(R.layout.fragment_camera, container, false)
+        _binding = FragmentCameraBinding.inflate(inflater, container, false)
+        return binding.root
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?)
     {
-        spinner = view.findViewById<Spinner>(R.id.cameraSpinner)
+        spinner = binding.cameraSpinner
         listOfItems = ArrayList()
         idOfExpenses = HashMap()
         imageList = ArrayList()
-
-        val application = requireActivity().application as Application
-
-        val db = MainDB.getDB(requireContext())
-
-        val expensesDataSource: ExpenseDataSource = ExpenseDataSource(DBWorker(db))
-        val expensePhotosDataSource: ExpensePhotoDataSource = ExpensePhotoDataSource(DBWorker(db))
-
-        val addExpenseUseCase = AddExpenseUseCase(expensesDataSource)
-        val loadExpensesUseCase = LoadExpensesUseCase(expensesDataSource)
-        val updateExpenseUseCse = UpdateExpenseUseCase(expensesDataSource)
-        val deleteExpenseUseCase = DeleteExpenseUseCase(expensesDataSource)
-
-        val expenseFactory = ExpenseViewModelFactory(
-            application,
-            loadExpensesUseCase,
-            addExpenseUseCase,
-            updateExpenseUseCse,
-            deleteExpenseUseCase
-        )
-
-        val addExpensePhotosUseCase = AddExpensePhotosUseCase(expensePhotosDataSource)
-        val loadExpensePhotosUseCase = LoadExpensePhotosUseCase(expensePhotosDataSource)
-        val deleteExpensePhotosUseCase = DeleteExpensePhotoUseCase(expensePhotosDataSource)
-
-        val photosFactory = ExpensePhotosViewModelFactory(
-            application,
-            loadExpensePhotosUseCase,
-            addExpensePhotosUseCase,
-            deleteExpensePhotosUseCase
-        )
-
-        expenseViewModel = ViewModelProvider(this, expenseFactory).get(ExpenseViewModel::class.java)
-
-        photosViewModel = ViewModelProvider(this, photosFactory).get(ExpensePhotosViewModel::class.java)
-
 
         loadExpenses()
 
@@ -137,7 +89,7 @@ class CameraFragment: Fragment() {
         }
 
 
-        var takePhotoBtn = view.findViewById<Button>(R.id.cameraButton2)
+        var takePhotoBtn = binding.cameraButton2
         takePhotoBtn.setOnClickListener{
             val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
             if (takePictureIntent.resolveActivity(requireActivity().packageManager) != null) {
@@ -167,31 +119,14 @@ class CameraFragment: Fragment() {
     }
     private fun makeListOfImages(view: View)
     {
+        recyclerView = binding.cameraImgRecView
+        adapter = ImageAdapter()
+        recyclerView.adapter = adapter
 
         viewLifecycleOwner.lifecycleScope.launch {
 
             photosViewModel.loadExpensePhotos(selectedItem)
-
-            photosViewModel.expensePhotos.collect {images ->
-                imageList.clear()
-
-                for (image in images)
-                {
-                    imageList.add(image)
-                }
-
-                initial(view, imageList)
-            }
         }
-    }
-
-    private fun initial(view: View, list: ArrayList<ImageModel>)
-    {
-        recyclerView = view.findViewById(R.id.cameraImgRecView)
-        adapter = ImageAdapter()
-        recyclerView.adapter = adapter
-
-        adapter.setList(list)
     }
 
     private fun savePhoto(bitmap: Bitmap) {

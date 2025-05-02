@@ -1,8 +1,9 @@
 package com.example.lr4_second.usecases.expense
 
 import com.example.lr4_second.datasources.ExpenseDataSource
+import javax.inject.Inject
 
-class UpdateExpenseUseCase(private val dataSource: ExpenseDataSource) {
+class UpdateExpenseUseCase @Inject constructor(private val dataSource: ExpenseDataSource) {
     operator fun invoke(name: String, newName: String, newValue: String): Result<Unit>
     {
         if (newName.isBlank() || newValue.isBlank()) return Result.failure(Exception("Новые данные не должны быть пустыми"))

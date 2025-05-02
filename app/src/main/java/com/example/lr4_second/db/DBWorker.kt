@@ -7,8 +7,9 @@ import com.example.lr4_second.domain.model.ImageModel
 import com.example.lr4_second.domain.model.PhotoEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
-class DBWorker(private val db: MainDB) {
+class DBWorker @Inject constructor(private val db: MainDB) {
 
     fun getExpenses(): Flow<List<ExpenseModel>>
     {
